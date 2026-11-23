@@ -14,6 +14,8 @@ beforeAll(async () => {
   delete process.env.NEXT_PUBLIC_SUPABASE_URL;
   delete process.env.SUPABASE_SERVICE_ROLE_KEY;
   delete process.env.VERCEL;
+  delete process.env.RENDER;
+  delete process.env.HOSTED;
   process.chdir(mkdtempSync(path.join(tmpdir(), "mentora-test-")));
   m = await import("@/lib/db");
 });

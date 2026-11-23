@@ -13,7 +13,7 @@ export type * from "./types";
 
 export function db(): DbAdapter {
   if (supabaseConfigured()) return supabaseAdapter;
-  if (serverEnv().isVercel) throw new Error("Supabase env vars are required on Vercel (the local JSON DB is dev-only).");
+  if (serverEnv().isHosted) throw new Error("Supabase env vars are required in hosted deployments (the local JSON DB is dev-only).");
   return localAdapter;
 }
 

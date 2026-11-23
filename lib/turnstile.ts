@@ -6,10 +6,10 @@ import { serverEnv } from "./env";
  * verification is skipped — in production the secret MUST be set (see LAUNCH_CHECKLIST.md).
  */
 export async function verifyTurnstile(token: string, ipHint?: string | null): Promise<boolean> {
-  const { turnstileSecret, isVercel } = serverEnv();
+  const { turnstileSecret, isHosted } = serverEnv();
   if (!turnstileSecret) {
-    if (isVercel && process.env.VERCEL_ENV === "production") {
-      console.error("[turnstile] TURNSTILE_SECRET_KEY missing in production");
+    if (isHosted && process.env.VERCEL_ENV !== "preview") {
+      console.error("[turnstile] TURNSTILE_SECRET_KEY missing on a hosted deployment");
       return false;
     }
     return true;

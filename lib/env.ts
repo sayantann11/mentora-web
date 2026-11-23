@@ -22,7 +22,8 @@ export function serverEnv() {
     ipHashSalt: e.IP_HASH_SALT ?? "dev-only-salt-change-me",
     cronSecret: e.CRON_SECRET ?? "",
     devAdminBypass: e.NODE_ENV !== "production" && e.DEV_ADMIN_BYPASS === "true",
-    isVercel: Boolean(e.VERCEL),
+    /** Running on a real host (Vercel, Render, or HOSTED=true): dev-only fallbacks are refused. */
+    isHosted: Boolean(e.VERCEL || e.RENDER || e.HOSTED === "true"),
   };
 }
 
