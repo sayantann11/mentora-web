@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+/* Serve the ₹ sign (U+20B9) from a local system font so pages don't download the ~120 KB
+   latin-ext web-font files just for one glyph. Falls back to the web font if none is installed. */
+@font-face {
+  font-family: "Mentora Rupee";
+  src: local("Segoe UI"), local("Roboto"), local("Noto Sans"), local("Helvetica Neue"), local("Arial");
+  unicode-range: U+20B9;
+}
+
+/* ───────────── Design tokens ───────────── */
+@theme {
+  --color-ink: #221a30;
+  --color-ink-soft: #4a4157;
+  --color-muted: #675f73;
+  --color-plum: #3f2d63;
+  --color-plum-deep: #2a1d44;
+  --color-violet: #6a4ea3;
+  --color-lilac: #b9a3dd;
+  --color-lavender: #efe9f7;
+  --color-mist: #f6f2fa;
+  --color-cream: #fbf8f3;
+  --color-sand: #f3ece1;
+  --color-saffron: #e9a23b;
+  --color-saffron-ink: #8a5208;
+  --color-peach: #f6d9b7;
+  --color-coral: #e07a5f;
+  --color-sage: #3f6f55;
+  --color-mint: #dcebe3;
+  --color-line: #e6dfec;
+  --color-status-green: #2f7a4f;
+  --color-status-yellow: #a06b00;
+  --color-status-red: #b3362f;
+
+  --font-display: "Mentora Rupee", var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: "Mentora Rupee", var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.5rem;
+  --shadow-soft: 0 1px 2px rgb(34 26 48 / 0.04), 0 12px 32px -12px rgb(63 45 99 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(34 26 48 / 0.05), 0 24px 48px -16px rgb(63 45 99 / 0.28);
+
+  --animate-rise: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  /* Transform-only: text is painted (and counted for LCP) from the very first frame. */
+  @keyframes rise {
+    from { transform: translateY(14px); }
+    to { transform: none; }
+  }
+}
+
+:root {
+  color-scheme: light;
+  --track-a: #8f6fd0;
+  --track-b: #c9b6ee;
+  --track-c: #5fb3a6;
+}
+
+/* ───────────── Base (layered, so utilities like text-white can override) ───────────── */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 88px;
+  }
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 100, "opsz" 72;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+  h3, h4 { font-variation-settings: "SOFT" 60, "opsz" 24; line-height: 1.2; }
+  p { text-wrap: pretty; }
+  ::selection { background: var(--color-peach); color: var(--color-ink); }
+
+  :focus-visible {
+    outline: 3px solid var(--color-saffron);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ───────────── Components ───────────── */
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-[1180px] px-5 sm:px-8; }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-violet;
+  }
+  .eyebrow::before {
+    content: "";
+    @apply inline-block h-px w-6 bg-current opacity-60;
+  }
+
+  .display-xl { @apply text-[clamp(2.6rem,6.4vw,5.4rem)] font-medium; }
+  .display-lg { @apply text-[clamp(2.1rem,4.4vw,3.6rem)] font-medium; }
+  .display-md { @apply text-[clamp(1.6rem,3vw,2.3rem)] font-medium; }
+  .accent { font-style: italic; color: var(--color-violet); font-variation-settings: "SOFT" 100, "opsz" 144; }
+
+  .lede { @apply text-[1.125rem] leading-relaxed text-ink-soft sm:text-[1.2rem]; }
+
+  .btn {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 py-3 text-[0.95rem] font-semibold transition duration-200 will-change-transform;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0); }
+  .btn-primary { @apply bg-plum text-white shadow-[0_10px_24px_-10px_rgb(63_45_99/0.7)] hover:bg-plum-deep; }
+  .btn-saffron { @apply bg-saffron text-ink shadow-[0_10px_24px_-10px_rgb(233_162_59/0.8)] hover:bg-[#f0b056]; }
+  .btn-ghost { @apply border border-plum/20 bg-white/60 text-plum backdrop-blur hover:border-plum/40 hover:bg-white; }
+  .btn-light { @apply bg-white text-plum hover:bg-lavender; }
+  .btn-sm { @apply min-h-10 px-4 py-2 text-sm; }
+
+  .card {
+    @apply rounded-[var(--radius-card)] border border-line bg-white p-6 shadow-[var(--shadow-soft)] sm:p-8;
+  }
+  .glass {
+    @apply rounded-[var(--radius-card)] border border-white/80 bg-white/[0.82] shadow-[var(--shadow-soft)];
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-white/80 px-3 py-1 text-xs font-semibold text-ink-soft;
+  }
+  .link { @apply font-semibold text-violet underline decoration-violet/30 underline-offset-4 transition hover:decoration-violet; }
+
+  .section { @apply py-20 sm:py-28; }
+
+  .prose-mentora { @apply max-w-[68ch] text-[1.075rem] leading-[1.8] text-ink-soft; }
+  .prose-mentora h2 { @apply mt-14 mb-4 text-[1.9rem] font-medium; }
+  .prose-mentora h3 { @apply mt-10 mb-3 text-[1.35rem] font-medium; }
+  .prose-mentora p { @apply my-5; }
+  .prose-mentora ul { @apply my-5 list-disc space-y-2 pl-6 marker:text-violet; }
+  .prose-mentora ol { @apply my-5 list-decimal space-y-2 pl-6 marker:font-semibold marker:text-violet; }
+  .prose-mentora a { @apply font-semibold text-violet underline decoration-violet/30 underline-offset-4 hover:decoration-violet; }
+  .prose-mentora strong { @apply font-semibold text-ink; }
+  .prose-mentora blockquote { @apply my-8 border-l-4 border-saffron bg-sand/60 py-3 pr-4 pl-5 font-display text-xl text-ink italic; }
+  .prose-mentora table { @apply my-6 w-full border-collapse text-left text-[0.95rem]; }
+  .prose-mentora th, .prose-mentora td { @apply border-b border-line py-2 pr-4 align-top; }
+  .prose-mentora th { @apply font-semibold text-ink; }
+
+  .field-label { @apply mb-1.5 block text-sm font-semibold text-ink; }
+  .field {
+    @apply block w-full rounded-xl border border-line bg-white px-4 py-3 text-base text-ink shadow-[inset_0_1px_2px_rgb(34_26_48/0.04)] transition placeholder:text-muted/70 focus:border-violet focus:ring-4 focus:ring-violet/15 focus:outline-none;
+  }
+  .field-error { @apply mt-1.5 text-sm font-medium text-status-red; }
+  .field-hint { @apply mt-1.5 text-sm text-muted; }
+}
+
+/* Paper grain — tiny inline SVG noise, no network request */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.15 0 0 0 0 0.3 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Scroll reveal — content is visible by default; JS only adds the animation class. */
+.reveal-ready [data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal-ready [data-reveal].is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready [data-reveal] { opacity: 1; transform: none; }
+}
+
+/* Hero poster — CSS fallback that also serves as the first paint under the 3D canvas */
+.hero-poster {
+  background:
+    radial-gradient(60% 55% at 78% 30%, color-mix(in oklab, var(--track-b) 70%, transparent) 0%, transparent 70%),
+    radial-gradient(45% 40% at 18% 78%, color-mix(in oklab, var(--track-a) 28%, transparent) 0%, transparent 70%),
+    radial-gradient(30% 30% at 88% 82%, color-mix(in oklab, var(--track-c) 30%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, #f4eefb 0%, #fbf8f3 100%);
+  transition: background 0.9s ease;
+}
+.poster-stone {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0%, color-mix(in oklab, var(--track-b) 80%, white) 45%, var(--track-a) 100%);
+  box-shadow: 0 30px 60px -20px color-mix(in oklab, var(--track-a) 60%, transparent);
+  transition: background 0.9s ease, box-shadow 0.9s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .poster-stone { animation: float 9s ease-in-out infinite; }
+  .poster-stone:nth-child(2) { animation-delay: -3s; }
+  .poster-stone:nth-child(3) { animation-delay: -6s; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -14px; }
+}
